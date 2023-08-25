@@ -35,12 +35,13 @@ text-transforn: captalize;
 `;
 
 const MovieComponent = (props) => {
-    return(<MovieContainer>
-        <CoverImage src="https://www.imdb.com/whats-on-tv/early-roles/rg3352337152/mediaviewer/rm206330625?ref_=ext_shr_lnk" /> 
-        <MovieName>usman here you go again </MovieName>
+    const{Title, Year, imdbID,Type, Poster}= props.movie;
+    return(<MovieContainer onClick={()=>props.onMovieSelect(imdbID)}>
+        <CoverImage src={Poster} /> 
+        <MovieName>{Title}</MovieName>
         <InfoColumn>
-            <MovieInfo>Year: 2012</MovieInfo>
-            <MovieInfo>Type: Movie</MovieInfo>
+            <MovieInfo>Year: {Year}</MovieInfo>
+            <MovieInfo>Type: {Type}</MovieInfo>
         </InfoColumn>
         </MovieContainer>
         )
