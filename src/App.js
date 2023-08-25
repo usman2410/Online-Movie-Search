@@ -1,8 +1,9 @@
 import { useState } from "react";
 import MovieComponent from "./components/MovieComponent";
+import MovieInfoComponent from "./components/MovieInfoComponent";
 import  styled from "styled-components";
 import axios from "axios";
-const API_KEY='jt4NkhIIhXpFGaBTQap9pbSaF1pa2c6GztGiFmEcC5hYNAnSmL3sPb16a12p7b12';
+export const API_KEY='9d02ee7a';
 const Container = styled.div`
 display:flex;
 flex-direction:column;
@@ -63,22 +64,16 @@ justify-content: space-evenly;
 function App() {
   const [searchMovie, updateSearchMovie]= useState();
   const [timeoutId, updateTimeoutId]= useState();
-  const fetchData= async (searchString)=>{
-   const respone=await fetch('https://eu-west-2.aws.data.mongodb-api.com/app/dataogjld/endpoint/data/v1', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Access-Control-Request-Headers': '*',
-      'api-key': API_KEY,
-    },
-    body: JSON.stringify({
-      collection: 'movies',
-      database: 'sample_mflix',
-      dataSource: 'ServerlessInstance0',
-    }),
-  });
-  console.log('respone')
+  const [movieList, updateMovieList]= useState([]);
+  const [selectedMovie, onMovieSelect]= useState();
+
+  const fetchData= async (searchMovie)=>{
+   const response = await axios.get(`https://www.omdbapi.com/?s=${searchMovie}&apikey=${API_KEY}`);
+
+   console.log(response)
+   updateMovieList(response.data.Search)
   }
+  
   const onTextChange=(event) =>{
     clearTimeout(timeoutId)
     updateSearchMovie(event.target.value);
@@ -97,12 +92,16 @@ function App() {
            onChange={onTextChange}/>
         </SearchBox>
         </Header>
+        {selectedMovie && <MovieInfoComponent selectedMovie={selectedMovie}/>}
         <MovieListContainer>
-          <MovieComponent/>
-          <MovieComponent/>
-          <MovieComponent/>
-          <MovieComponent/>
-          <MovieComponent/>
+        {
+          movieList?.length? movieList.map((movie,index)=><MovieComponent 
+          key={index} 
+          movie={movie}
+          onMovieSelect={onMovieSelect}/>):
+          "Keyword Movie not found"
+        }
+        
         </MovieListContainer>
     </Container>
   );
